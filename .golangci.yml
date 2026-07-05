@@ -1,0 +1,21 @@
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - ineffassign
+    - unconvert
+    - unparam
+    - gocritic
+    - revive
+    - bodyclose
+    - errorlint
+    - gofmt
+    - goimports
+    - gosimple
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

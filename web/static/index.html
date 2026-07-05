@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Library</title>
+<style>
+  body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+  form { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  input { flex: 1; padding: .4rem; }
+  li { display: flex; gap: .5rem; align-items: center; margin: .3rem 0; }
+  li span { flex: 1; }
+  button { cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>Library</h1>
+
+<form id="book-form">
+  <input id="title" placeholder="Title">
+  <input id="author" placeholder="Author">
+  <input id="year" placeholder="Year">
+  <button type="submit">Add</button>
+</form>
+
+<ul id="list"></ul>
+
+<script>
+const list = document.getElementById('list');
+const form = document.getElementById('book-form');
+
+async function load() {
+  const resp = await fetch('/api/books');
+  const books = await resp.json();
+  list.innerHTML = '';
+  for (const b of books ?? []) {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span>${b.title} — ${b.author} (${b.year})</span>
+      <button data-id="${b.id}" class="remove">Remove</button>
+    `;
+    list.appendChild(li);
+  }
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const resp = await fetch('/api/books', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title: document.getElementById('title').value,
+      author: document.getElementById('author').value,
+      year: Number(document.getElementById('year').value),
+    }),
+  });
+  if (!resp.ok) {
+    alert(await resp.text());
+    return;
+  }
+  form.reset();
+  load();
+});
+
+list.addEventListener('click', async (e) => {
+  if (!e.target.classList.contains('remove')) return;
+  await fetch(`/api/books/${e.target.dataset.id}`, { method: 'DELETE' });
+  load();
+});
+
+load();
+</script>
+</body>
+</html>
