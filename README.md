@@ -84,5 +84,4 @@ This builds the Go binary in a multi-stage Docker build, copies the static asset
 
 ## Notes
 
-- No test suite yet.
 - No `pkg/` directory — all shared code currently lives under `internal/book`, which is intentional since nothing here is meant to be imported by external modules.
